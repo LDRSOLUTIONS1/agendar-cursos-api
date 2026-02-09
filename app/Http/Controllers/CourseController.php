@@ -172,23 +172,23 @@ class CourseController extends Controller
         try {
             $course = Course::with(['schedules', 'reservations', 'images'])->findOrFail($id);
 
-            if ($course->schedules->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede editar el curso porque tiene horarios asociados'
-                ], 400);
-            }
+            // if ($course->schedules->count() > 0) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar el curso porque tiene horarios asociados'
+            //     ], 400);
+            // }
 
-            if ($course->reservations->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede editar el curso porque tiene reservas asociadas'
-                ], 400);
-            }
+            // if ($course->reservations->count() > 0) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar el curso porque tiene reservas asociadas'
+            //     ], 400);
+            // }
 
-            if ($course->images->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede eliminar el curso porque tiene imágenes asociadas'
-                ], 400);
-            }
+            // if ($course->images->count() > 0) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar el curso porque tiene imágenes asociadas'
+            //     ], 400);
+            // }
 
             $validated = $request->validate([
                 'instructor_id' => 'nullable|exists:users,id',

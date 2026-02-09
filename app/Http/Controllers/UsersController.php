@@ -70,29 +70,25 @@ class UsersController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'name' => 'required|string|max:255',
-                'first_last_name' => 'required|string|max:255',
-                'second_last_name' => 'required|string|max:255',
-                'birth_date' => 'required|date',
-                'curp' => 'required|string|max:18|unique:users,curp',
-                'rfc' => 'required|string|max:13|unique:users,rfc',
+                'first_last_name' => 'nullable|string|max:255',
+                'second_last_name' => 'nullable|string|max:255',
+                'birth_date' => 'nullable|date',
+                'curp' => 'nullable|string|max:18|unique:users,curp',
+                'rfc' => 'nullable|string|max:13|unique:users,rfc',
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'phone' => 'required|string|max:20',
                 'type_user' => 'required|integer',
-                'password' => 'required|string|min:4|confirmed',
+                'category_id' => 'required|integer|exists:categories,id',
+                'password' => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
             ], [
                 'name.required' => 'El nombre es obligatorio.',
                 'name.max' => 'El nombre no puede tener más de 255 caracteres.',
-                'first_last_name.required' => 'El apellido es obligatorio.',
                 'first_last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
-                'second_last_name.required' => 'El apellido es obligatorio.',
                 'second_last_name.max' => 'El apellido no puede tener más de 255 caracteres.',
-                'birth_date.required' => 'La fecha de nacimiento es obligatoria.',
                 'birth_date.date' => 'La fecha de nacimiento no es válida.',
-                'curp.required' => 'La CURP es obligatoria.',
                 'curp.max' => 'La CURP no puede tener más de 18 caracteres.',
                 'curp.unique' => 'La CURP ya está registrada.',
-                'rfc.required' => 'El RFC es obligatorio.',
                 'rfc.max' => 'El RFC no puede tener más de 13 caracteres.',
                 'rfc.unique' => 'El RFC ya está registrado.',
                 'email.required' => 'El correo electrónico es obligatorio.',
@@ -103,7 +99,9 @@ class UsersController extends Controller
                 'phone.max' => 'El teléfono no puede superar los 20 caracteres.',
                 'type_user.required' => 'El tipo de usuario es obligatorio.',
                 'type_user.in' => 'El tipo de usuario seleccionado no es válido.',
-                'password.required' => 'La contraseña es obligatoria.',
+                'category_id.required' => 'La categoría es obligatoria.',
+                'category_id.integer' => 'La categoría debe ser un número entero.',
+                'category_id.exists' => 'La categoría seleccionada no existe.',
                 'password.min' => 'La contraseña debe tener al menos 4 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
@@ -123,6 +121,7 @@ class UsersController extends Controller
                 'email',
                 'phone',
                 'type_user',
+                'category_id',
                 'collaborator_number',
             ]);
 
@@ -150,23 +149,21 @@ class UsersController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'razon_social'        => 'required|string|max:255',
-                'rfc'                 => 'required|string|max:13|unique:users,rfc',
-                'representante_legal' => 'required|string|max:255',
-                'domicilio_fiscal'    => 'required|string|max:255',
+                'rfc'                 => 'nullable|string|max:13|unique:users,rfc',
+                'representante_legal' => 'nullable|string|max:255',
+                'domicilio_fiscal'    => 'nullable|string|max:255',
                 'email'               => 'required|string|email|max:255|unique:users,email',
                 'phone'               => 'required|string|max:20',
                 'type_user'           => 'required|integer',
-                'password'            => 'required|string|min:4|confirmed',
+                'category_id'         => 'required|integer|exists:categories,id',
+                'password'            => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
             ], [
                 'razon_social.required' => 'La razón social es obligatoria.',
                 'razon_social.max' => 'La razón social no puede superar los 255 caracteres.',
-                'rfc.required' => 'El RFC es obligatorio.',
                 'rfc.max' => 'El RFC no puede superar los 13 caracteres.',
                 'rfc.unique' => 'El RFC ya está registrado.',
-                'representante_legal.required' => 'El representante legal es obligatorio.',
                 'representante_legal.max' => 'El nombre del representante legal no puede superar los 255 caracteres.',
-                'domicilio_fiscal.required' => 'El domicilio fiscal es obligatorio.',
                 'domicilio_fiscal.max' => 'El domicilio fiscal no puede superar los 255 caracteres.',
                 'email.required' => 'El correo electrónico es obligatorio.',
                 'email.email' => 'El correo electrónico debe ser válido.',
@@ -176,7 +173,9 @@ class UsersController extends Controller
                 'phone.max' => 'El teléfono no puede superar los 20 caracteres.',
                 'type_user.required' => 'El tipo de usuario es obligatorio.',
                 'type_user.in' => 'El tipo de usuario seleccionado no es válido.',
-                'password.required' => 'La contraseña es obligatoria.',
+                'category_id.required' => 'La categoría es obligatoria.',
+                'category_id.integer' => 'La categoría debe ser un número entero.',
+                'category_id.exists' => 'La categoría seleccionada no existe.',
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
@@ -194,6 +193,7 @@ class UsersController extends Controller
                 'email',
                 'phone',
                 'type_user',
+                'category_id',
                 'collaborator_number',
             ]);
 
@@ -236,23 +236,23 @@ class UsersController extends Controller
                 return response()->json(['error' => 'Usuario no encontrado o no es persona física'], 404);
             }
 
-            if ($user->courses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene cursos asignados.'
-                ], 400);
-            }
+            // if ($user->courses()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene cursos asignados.'
+            //     ], 400);
+            // }
 
-            if ($user->reservations()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene reservas activas.'
-                ], 400);
-            }
+            // if ($user->reservations()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene reservas activas.'
+            //     ], 400);
+            // }
 
-            if ($user->favoriteCourses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene cursos marcados como favoritos.'
-                ], 400);
-            }
+            // if ($user->favoriteCourses()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene cursos marcados como favoritos.'
+            //     ], 400);
+            // }
 
             $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
             if ($isInstructor) {
@@ -263,27 +263,24 @@ class UsersController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|required|string|max:255',
-                'first_last_name' => 'sometimes|required|string|max:255',
-                'second_last_name' => 'sometimes|required|string|max:255',
-                'birth_date' => 'sometimes|required|date',
-                'curp' => 'sometimes|required|string|max:18|unique:users,curp,' . $id,
-                'rfc' => 'sometimes|required|string|max:13|unique:users,rfc,' . $id,
+                'first_last_name' => 'sometimes|nullable|string|max:255',
+                'second_last_name' => 'sometimes|nullable|string|max:255',
+                'birth_date' => 'sometimes|nullable|date',
+                'curp' => 'sometimes|nullable|string|max:18|unique:users,curp,' . $id,
+                'rfc' => 'sometimes|nullable|string|max:13|unique:users,rfc,' . $id,
                 'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
                 'phone' => 'sometimes|required|string|max:20',
                 'type_user' => 'sometimes|required|integer',
+                'category_id' => 'required|integer|exists:categories,id',
                 'password' => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
             ], [
                 'name.required' => 'El nombre es obligatorio.',
                 'name.max' => 'El nombre no puede superar los 255 caracteres.',
-                'first_last_name.required' => 'El apellido es obligatorio.',
                 'second_last_name.max' => 'El apellido no puede superar los 255 caracteres.',
-                'birth_date.required' => 'La fecha de nacimiento es obligatoria.',
                 'birth_date.date' => 'La fecha de nacimiento no es válida.',
-                'curp.required' => 'La CURP es obligatoria.',
                 'curp.max' => 'La CURP no puede superar los 18 caracteres.',
                 'curp.unique' => 'La CURP ya está registrada.',
-                'rfc.required' => 'El RFC es obligatorio.',
                 'rfc.max' => 'El RFC no puede superar los 13 caracteres.',
                 'rfc.unique' => 'El RFC ya está registrado.',
                 'email.required' => 'El correo electrónico es obligatorio.',
@@ -294,6 +291,9 @@ class UsersController extends Controller
                 'phone.max' => 'El teléfono no puede superar los 20 caracteres.',
                 'type_user.required' => 'El tipo de usuario es obligatorio.',
                 'type_user.in' => 'El tipo de usuario seleccionado no es válido.',
+                'category_id.required' => 'La categoría es obligatoria.',
+                'category_id.integer' => 'La categoría debe ser un número entero.',
+                'category_id.exists' => 'La categoría seleccionada no existe.',
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
@@ -313,6 +313,7 @@ class UsersController extends Controller
                 'email',
                 'phone',
                 'type_user',
+                'category_id',
                 'collaborator_number',
             ]);
 
@@ -374,23 +375,21 @@ class UsersController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'razon_social'        => 'sometimes|required|string|max:255',
-                'rfc'                 => 'sometimes|required|string|max:13|unique:users,rfc,' . $id,
-                'representante_legal' => 'sometimes|required|string|max:255',
-                'domicilio_fiscal'    => 'sometimes|required|string|max:255',
+                'rfc'                 => 'sometimes|nullable|string|max:13|unique:users,rfc,' . $id,
+                'representante_legal' => 'sometimes|nullable|string|max:255',
+                'domicilio_fiscal'    => 'sometimes|nullable|string|max:255',
                 'email'               => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
                 'phone'               => 'sometimes|required|string|max:20',
                 'type_user'           => 'sometimes|required|integer',
+                'category_id'         => 'sometimes|required|integer|exists:categories,id',
                 'password'            => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
             ], [
                 'razon_social.required' => 'La razón social es obligatoria.',
                 'razon_social.max' => 'La razón social no puede superar los 255 caracteres.',
-                'rfc.required' => 'El RFC es obligatorio.',
                 'rfc.max' => 'El RFC no puede superar los 13 caracteres.',
                 'rfc.unique' => 'El RFC ya está registrado.',
-                'representante_legal.required' => 'El representante legal es obligatorio.',
                 'representante_legal.max' => 'El nombre del representante legal no puede superar los 255 caracteres.',
-                'domicilio_fiscal.required' => 'El domicilio fiscal es obligatorio.',
                 'domicilio_fiscal.max' => 'El domicilio fiscal no puede superar los 255 caracteres.',
                 'email.required' => 'El correo electrónico es obligatorio.',
                 'email.email' => 'El correo electrónico debe ser válido.',
@@ -400,6 +399,9 @@ class UsersController extends Controller
                 'phone.max' => 'El teléfono no puede superar los 20 caracteres.',
                 'type_user.required' => 'El tipo de usuario es obligatorio.',
                 'type_user.in' => 'El tipo de usuario seleccionado no es válido.',
+                'category_id.required' => 'La categoría es obligatoria.',
+                'category_id.integer' => 'La categoría debe ser un número entero.',
+                'category_id.exists' => 'La categoría seleccionada no existe.',
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
@@ -419,6 +421,7 @@ class UsersController extends Controller
                 'email',
                 'phone',
                 'type_user',
+                'category_id',
                 'collaborator_number',
             ]);
 

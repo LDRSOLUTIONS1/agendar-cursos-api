@@ -85,12 +85,12 @@ class ModelsController extends Controller
         try {
             $model = Models::with('courses')->findOrFail($id);
 
-            if ($model->courses->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede actualizar el modelo',
-                    'mensaje' => 'Este modelo tiene cursos asociados y no puede ser modificado.'
-                ], 400);
-            }
+            // if ($model->courses->count() > 0) {
+            //     return response()->json([
+            //         'error' => 'No se puede actualizar el modelo',
+            //         'mensaje' => 'Este modelo tiene cursos asociados y no puede ser modificado.'
+            //     ], 400);
+            // }
 
             $validated = $request->validate([
                 'nombre_segmento' => 'nullable|string|max:255',
