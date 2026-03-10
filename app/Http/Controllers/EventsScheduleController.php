@@ -449,6 +449,7 @@ class EventsScheduleController extends Controller
                 'state_id'        => 'required|exists:states,id',
                 'municipality_id' => 'required|exists:municipalities,id',
                 'start_date'      => 'required|date_format:Y-m-d H:i:s',
+                'end_date'        => 'required|date_format:Y-m-d H:i:s',
                 'location'        => 'required|string|max:255',
             ], [
                 'course_id.required'       => 'El ID del curso es obligatorio.',
@@ -461,6 +462,8 @@ class EventsScheduleController extends Controller
                 'municipality_id.exists'   => 'El municipio seleccionado no existe.',
                 'start_date.required'      => 'La fecha de inicio es obligatoria.',
                 'start_date.date_format'   => 'La fecha de inicio debe tener el formato AAAA-MM-DD HH:MM:SS.',
+                'end_date.required'        => 'La fecha de fin es obligatoria.',
+                'end_date.date_format'     => 'La fecha de fin debe tener el formato AAAA-MM-DD HH:MM:SS.',
                 'location.required'        => 'La ubicación es obligatoria.',
                 'location.string'          => 'La ubicación debe ser una cadena de texto.',
                 'location.max'             => 'La ubicación no debe exceder los 255 caracteres.',
@@ -504,6 +507,7 @@ class EventsScheduleController extends Controller
                     'state_id'        => $validated['state_id'],
                     'municipality_id' => $validated['municipality_id'],
                     'start_date'      => $validated['start_date'],
+                    'end_date'        => $validated['end_date'],
                     'location'        => $validated['location'],
                 ]
             ));
