@@ -2,6 +2,7 @@
 
 namespace App\Imports;
 
+use Exception;
 use App\Models\ReservationParticipant;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
@@ -20,7 +21,37 @@ class ParticipantsImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
-        foreach ($rows as $row) {
+        if ($rows->isEmpty()) {
+            throw new Exception(
+                'El archivo está vacío'
+            );
+        }
+
+        $requiredColumns = [
+            'nombre',
+            'correo',
+            'telefono',
+            'empresa',
+            'puesto'
+        ];
+
+        $headers = array_keys($rows->first()->toArray());
+
+        foreach ($requiredColumns as $column) {
+
+            if (!in_array($column, $headers)) {
+
+                throw new Exception(
+                    "Falta la columna obligatoria: {$column}"
+                );
+            }
+        }
+
+        foreach ($rows as $index => $row) {
+
+            if (empty($row['nombre'])) {
+                continue;
+            }
 
             $exists = ReservationParticipant::where([
                 'reservation_id' => $this->reservationId,

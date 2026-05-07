@@ -27,6 +27,12 @@ class ReservationParticipant extends Model
         'notes',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     protected $casts = [
         'evaluation_status' => 'integer',
         'attendance' => 'boolean',
@@ -34,19 +40,11 @@ class ReservationParticipant extends Model
         'certificate_generated' => 'boolean',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONES
-    |--------------------------------------------------------------------------
-    */
-
-    // Reservación
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
     }
 
-    // Archivo de importación
     public function reservationImport()
     {
         return $this->belongsTo(ReservationImport::class);

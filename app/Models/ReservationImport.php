@@ -21,30 +21,27 @@ class ReservationImport extends Model
         'status',
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     protected $casts = [
         'total_participants' => 'integer',
         'status' => 'integer',
     ];
 
-    /*
-    |--------------------------------------------------------------------------
-    | RELACIONES
-    |--------------------------------------------------------------------------
-    */
-
-    // Relación con reservación
     public function reservation()
     {
         return $this->belongsTo(Reservation::class);
     }
 
-    // Usuario que realizó la importación
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Participantes importados
     public function participants()
     {
         return $this->hasMany(ReservationParticipant::class);
