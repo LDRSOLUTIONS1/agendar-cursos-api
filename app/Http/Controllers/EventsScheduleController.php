@@ -445,7 +445,8 @@ class EventsScheduleController extends Controller
         try {
             $validated = $request->validate([
                 'course_id'       => 'required|exists:courses,id',
-                'student_id'      => 'required|exists:users,id',
+                'student_id'      => 'nullable|exists:users,id',
+                'distribuidor_id' => 'nullable',
                 'state_id'        => 'required|exists:states,id',
                 'municipality_id' => 'required|exists:municipalities,id',
                 'start_date'      => 'required|date_format:Y-m-d H:i:s',
@@ -454,8 +455,7 @@ class EventsScheduleController extends Controller
             ], [
                 'course_id.required'       => 'El ID del curso es obligatorio.',
                 'course_id.exists'         => 'El curso seleccionado no existe.',
-                'student_id.required'       => 'El ID del cliente es obligatorio.',
-                'student_id.exists'         => 'El cliente seleccionado no existe.',
+                'student_id.exists'        => 'El cliente seleccionado no existe.',
                 'state_id.required'        => 'El estado es obligatorio.',
                 'state_id.exists'          => 'El estado seleccionado no existe.',
                 'municipality_id.required' => 'El municipio es obligatorio.',
@@ -516,7 +516,8 @@ class EventsScheduleController extends Controller
 
             $reservation = Reservation::create([
                 'course_id'   => $validated['course_id'],
-                'student_id'   => $validated['student_id'],
+                'student_id'   => $validated['student_id'] ?? null,
+                'distribuidor_id' => $validated['distribuidor_id'] ?? null,
                 'schedule_id' => $schedule->id,
                 'status'      => Reservation::STATUS_PENDING,
             ]);

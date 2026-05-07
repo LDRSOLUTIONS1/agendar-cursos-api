@@ -17,6 +17,7 @@ class Reservation extends Model
 
     protected $fillable = [
         'student_id',
+        'distribuidor_id',
         'course_id',
         'schedule_id',
         'reserved_at',
@@ -58,5 +59,15 @@ class Reservation extends Model
     public function scopeStatus($query, $status)
     {
         return $query->where('status', $status);
+    }
+
+    public function imports()
+    {
+        return $this->hasMany(ReservationImport::class);
+    }
+
+    public function participants()
+    {
+        return $this->hasMany(ReservationParticipant::class);
     }
 }

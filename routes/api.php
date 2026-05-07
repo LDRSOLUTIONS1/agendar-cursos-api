@@ -9,6 +9,7 @@ use App\Http\Controllers\GraphicsController;
 use App\Http\Controllers\ImageCourseController;
 use App\Http\Controllers\ModelsController;
 use App\Http\Controllers\ReservationControlller;
+use App\Http\Controllers\ReservationParticipantController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UsersController;
 use Illuminate\Http\Request;
@@ -118,6 +119,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/countCourse', [GraphicsController::class, 'countCourse']);
     Route::get('/countReservation', [GraphicsController::class, 'countReservation']);
     Route::get('/countModels', [GraphicsController::class, 'countModels']);
+
+    Route::post(
+        '/reservations/{id}/participants',
+        [ReservationParticipantController::class, 'import']
+    );
 });
 
 //Usuario autenticado

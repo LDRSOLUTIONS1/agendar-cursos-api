@@ -12,9 +12,11 @@ return new class extends Migration
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')
+                ->nullable()
                 ->constrained('users')
                 ->onDelete('cascade');
 
+            $table->string('distribuidor_id')->nullable();
             $table->foreignId('course_id')
                 ->constrained('courses')
                 ->onDelete('cascade');
