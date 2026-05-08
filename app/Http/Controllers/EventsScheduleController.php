@@ -7,6 +7,7 @@ use App\Mail\Instructor;
 use App\Mail\NuevoHorario;
 use App\Models\EventsSchedule;
 use App\Models\Reservation;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -110,32 +111,74 @@ class EventsScheduleController extends Controller
     public function indexTypeUserAgenda($id)
     {
         try {
-            $schedule = EventsSchedule::with('course', 'instructor', 'reservations', 'reservations.student', 'state', 'municipality')
-                ->whereHas('course', function ($query) use ($id) {
-                    $query->where('instructor_id', $id);
-                })
-                ->orWhereHas('reservations', function ($query) use ($id) {
-                    $query->where('student_id', $id);
-                })
-                ->get();
+
+            $user = User::findOrFail($id);
+
+            $query = EventsSchedule::with(
+                'course',
+                'instructor',
+                'reservations',
+                'reservations.student',
+                'state',
+                'municipality'
+            );
+
+            if (
+                $user->type_user == User::Admin ||
+                $user->type_user == User::SubAdmin
+            ) {
+
+                $schedule = $query->get();
+            } else {
+
+                $schedule = $query
+                    ->whereHas('course', function ($query) use ($id) {
+                        $query->where('instructor_id', $id);
+                    })
+                    ->orWhereHas('reservations', function ($query) use ($id) {
+                        $query->where('student_id', $id);
+                    })
+                    ->get();
+            }
 
             return response()->json($schedule, 200);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Error al obtener los cursos', 'mensaje' => $e->getMessage()], 500);
+
+            return response()->json([
+                'error' => 'Error al obtener los cursos',
+                'mensaje' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function indexTypeUserAgendaCount($id)
     {
         try {
-            $schedule = EventsSchedule::whereHas('course', function ($query) use ($id) {
-                $query->where('instructor_id', $id);
-            })
-                ->orWhereHas('reservations', function ($query) use ($id) {
-                    $query->where('student_id', $id);
-                })
-                ->select('id')
-                ->get();
+
+            $user = User::findOrFail($id);
+
+            $query = EventsSchedule::query();
+
+            if (
+                $user->type_user == User::Admin ||
+                $user->type_user == User::SubAdmin
+            ) {
+
+                $schedule = $query
+                    ->select('id')
+                    ->get();
+            } else {
+
+                $schedule = $query
+                    ->whereHas('course', function ($query) use ($id) {
+                        $query->where('instructor_id', $id);
+                    })
+                    ->orWhereHas('reservations', function ($query) use ($id) {
+                        $query->where('student_id', $id);
+                    })
+                    ->select('id')
+                    ->get();
+            }
 
             return response()->json($schedule, 200);
         } catch (\Exception $e) {
@@ -452,6 +495,8 @@ class EventsScheduleController extends Controller
                 'start_date'      => 'required|date_format:Y-m-d H:i:s',
                 'end_date'        => 'required|date_format:Y-m-d H:i:s',
                 'location'        => 'required|string|max:255',
+                'name'            => 'nullable|string|max:255',
+                'razon_social'    => 'nullable|string|max:255',
             ], [
                 'course_id.required'       => 'El ID del curso es obligatorio.',
                 'course_id.exists'         => 'El curso seleccionado no existe.',
@@ -467,6 +512,10 @@ class EventsScheduleController extends Controller
                 'location.required'        => 'La ubicación es obligatoria.',
                 'location.string'          => 'La ubicación debe ser una cadena de texto.',
                 'location.max'             => 'La ubicación no debe exceder los 255 caracteres.',
+                'name.string'             => 'El nombre debe ser una cadena de texto.',
+                'name.max'                => 'El nombre no debe exceder los 255 caracteres.',
+                'razon_social.string'     => 'La razón social debe ser una cadena de texto.',
+                'razon_social.max'        => 'La razón social no debe exceder los 255 caracteres.',
             ]);
 
             $date = Carbon::parse($validated['start_date']);
@@ -514,9 +563,27 @@ class EventsScheduleController extends Controller
 
             $schedule->admins()->attach(auth()->id());
 
+            $userId = $validated['student_id'] ?? null;
+
+            if (!empty($validated['distribuidor_id'])) {
+
+                $user = User::firstOrCreate(
+                    [
+                        'name' => $validated['name'],
+                        'razon_social' => $validated['razon_social'],
+                    ],
+                    [
+                        'type_user'   => User::Student,
+                        'type_person' => User::Moral,
+                    ]
+                );
+
+                $userId = $user->id;
+            }
+
             $reservation = Reservation::create([
                 'course_id'   => $validated['course_id'],
-                'student_id'   => $validated['student_id'] ?? null,
+                'student_id'   => $userId,
                 'distribuidor_id' => $validated['distribuidor_id'] ?? null,
                 'schedule_id' => $schedule->id,
                 'status'      => Reservation::STATUS_PENDING,

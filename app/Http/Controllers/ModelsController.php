@@ -59,8 +59,6 @@ class ModelsController extends Controller
                 'nombre_modelo.required' => 'El nombre de tipo unidad es obligatorio',
             ]);
 
-            $validated['user_id'] = auth()->id();
-
             $model = Models::create($validated);
 
             return response()->json([

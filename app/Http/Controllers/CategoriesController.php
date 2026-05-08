@@ -54,8 +54,6 @@ class CategoriesController extends Controller
                 'name.unique' => 'El nombre ya existe',
             ]);
 
-            $validated['user_id'] = auth()->id();
-
             $category = categories::create($validated);
 
             return response()->json(['mensaje' => 'Categoría creada correctamente', 'categoría' => $category], 201);
