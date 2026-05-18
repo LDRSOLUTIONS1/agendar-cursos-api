@@ -48,10 +48,13 @@ class CategoriesController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
                 'description' => 'nullable|string',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'name.required' => 'El nombre es obligatorio',
                 'name.max' => 'El nombre no puede tener más de 255 caracteres',
                 'name.unique' => 'El nombre ya existe',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             $category = categories::create($validated);
@@ -79,10 +82,13 @@ class CategoriesController extends Controller
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
                 'description' => 'nullable|string',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'name.required' => 'El nombre es obligatorio',
                 'name.max' => 'El nombre no puede tener más de 255 caracteres',
                 'name.unique' => 'El nombre ya existe',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             $category->update($validated);
@@ -95,26 +101,26 @@ class CategoriesController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        try {
-            $category = categories::with('courses')->findOrFail($id);
+    // public function destroy($id)
+    // {
+    //     try {
+    //         $category = categories::with('courses')->findOrFail($id);
 
-            if ($category->courses->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede eliminar la categoría',
-                    'mensaje' => 'Esta categoría tiene cursos asociados y no puede ser eliminada.',
-                ], 400);
-            }
+    //         if ($category->courses->count() > 0) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar la categoría',
+    //                 'mensaje' => 'Esta categoría tiene cursos asociados y no puede ser eliminada.',
+    //             ], 400);
+    //         }
 
-            $category->delete();
+    //         $category->delete();
 
-            return response()->json(['mensaje' => 'Categoría eliminada correctamente.'], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al eliminar la categoría',
-                'mensaje' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json(['mensaje' => 'Categoría eliminada correctamente.'], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Error al eliminar la categoría',
+    //             'mensaje' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }

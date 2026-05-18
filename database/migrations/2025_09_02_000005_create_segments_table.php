@@ -4,13 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCategoriesTable extends Migration
+class CreateSegmentsTable extends Migration
 {
     public function up()
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('segments', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+
+            $table->string('name');
             $table->text('description')->nullable();
             $table->tinyInteger('estado')
                 ->default(2)
@@ -19,9 +20,9 @@ class CreateCategoriesTable extends Migration
             $table->softDeletes();
         });
     }
-    
+
     public function down()
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('segments');
     }
 }

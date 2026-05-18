@@ -12,7 +12,8 @@ class Models extends Model
     protected $fillable = [
         'nombre_segmento',
         'nombre_tipo_unidad',
-        'user_id',
+        'segment_id',
+        'estado',
     ];
 
     protected $dates = ['deleted_at'];
@@ -28,8 +29,8 @@ class Models extends Model
         return $this->hasMany(Course::class, 'model_id');
     }
 
-    public function user()
+    public function segment()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Segment::class, 'segment_id');
     }
 }

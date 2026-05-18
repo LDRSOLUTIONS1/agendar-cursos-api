@@ -81,6 +81,7 @@ class UsersController extends Controller
                 'category_id' => 'required|integer|exists:categories,id',
                 'password' => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'name.required' => 'El nombre es obligatorio.',
                 'name.max' => 'El nombre no puede tener más de 255 caracteres.',
@@ -103,6 +104,8 @@ class UsersController extends Controller
                 'password.min' => 'La contraseña debe tener al menos 4 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             if ($validator->fails()) {
@@ -121,6 +124,7 @@ class UsersController extends Controller
                 'type_user',
                 'category_id',
                 'collaborator_number',
+                'estado',
             ]);
 
             $data['password'] = Hash::make($request->password);
@@ -156,6 +160,7 @@ class UsersController extends Controller
                 'category_id'         => 'required|integer|exists:categories,id',
                 'password'            => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
+                'estado'              => 'nullable|integer|in:0,1,2',
             ], [
                 'razon_social.required' => 'La razón social es obligatoria.',
                 'razon_social.max' => 'La razón social no puede superar los 255 caracteres.',
@@ -175,6 +180,8 @@ class UsersController extends Controller
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             if ($validator->fails()) {
@@ -191,6 +198,7 @@ class UsersController extends Controller
                 'type_user',
                 'category_id',
                 'collaborator_number',
+                'estado',
             ]);
 
             $data['password'] = Hash::make($request->password);
@@ -250,12 +258,12 @@ class UsersController extends Controller
             //     ], 400);
             // }
 
-            $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
-            if ($isInstructor) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque está asignado como instructor en uno o más horarios.'
-                ], 400);
-            }
+            // $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
+            // if ($isInstructor) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque está asignado como instructor en uno o más horarios.'
+            //     ], 400);
+            // }
 
             $validator = Validator::make($request->all(), [
                 'name' => 'sometimes|required|string|max:255',
@@ -270,6 +278,7 @@ class UsersController extends Controller
                 'category_id' => 'required|integer|exists:categories,id',
                 'password' => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'name.required' => 'El nombre es obligatorio.',
                 'name.max' => 'El nombre no puede superar los 255 caracteres.',
@@ -291,6 +300,8 @@ class UsersController extends Controller
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             if ($validator->fails()) {
@@ -309,6 +320,7 @@ class UsersController extends Controller
                 'type_user',
                 'category_id',
                 'collaborator_number',
+                'estado',
             ]);
 
             if ($request->filled('password')) {
@@ -342,30 +354,30 @@ class UsersController extends Controller
                 ], 404);
             }
 
-            if ($user->courses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene cursos asignados.'
-                ], 400);
-            }
+            // if ($user->courses()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene cursos asignados.'
+            //     ], 400);
+            // }
 
-            if ($user->reservations()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene reservas activas.'
-                ], 400);
-            }
+            // if ($user->reservations()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene reservas activas.'
+            //     ], 400);
+            // }
 
-            if ($user->favoriteCourses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque tiene cursos marcados como favoritos.'
-                ], 400);
-            }
+            // if ($user->favoriteCourses()->exists()) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque tiene cursos marcados como favoritos.'
+            //     ], 400);
+            // }
 
-            $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
-            if ($isInstructor) {
-                return response()->json([
-                    'error' => 'No se puede editar este usuario porque está asignado como instructor en uno o más horarios.'
-                ], 400);
-            }
+            // $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
+            // if ($isInstructor) {
+            //     return response()->json([
+            //         'error' => 'No se puede editar este usuario porque está asignado como instructor en uno o más horarios.'
+            //     ], 400);
+            // }
 
             $validator = Validator::make($request->all(), [
                 'razon_social'        => 'sometimes|required|string|max:255',
@@ -378,6 +390,7 @@ class UsersController extends Controller
                 'category_id'         => 'sometimes|required|integer|exists:categories,id',
                 'password'            => 'nullable|string|min:4|confirmed',
                 'collaborator_number' => 'nullable|string|max:10',
+                'estado'              => 'nullable|integer|in:0,1,2',
             ], [
                 'razon_social.required' => 'La razón social es obligatoria.',
                 'razon_social.max' => 'La razón social no puede superar los 255 caracteres.',
@@ -397,6 +410,8 @@ class UsersController extends Controller
                 'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
                 'password.confirmed' => 'La confirmación de la contraseña no coincide.',
                 'collaborator_number.max' => 'El número de colaborador no puede superar los 10 caracteres.',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             if ($validator->fails()) {
@@ -415,6 +430,7 @@ class UsersController extends Controller
                 'type_user',
                 'category_id',
                 'collaborator_number',
+                'estado',
             ]);
 
             if ($request->filled('password')) {
@@ -437,97 +453,97 @@ class UsersController extends Controller
         }
     }
 
-    public function destroy(string $id)
-    {
-        try {
-            $user = User::with(['courses', 'reservations', 'favoriteCourses'])->findOrFail($id);
+    // public function destroy(string $id)
+    // {
+    //     try {
+    //         $user = User::with(['courses', 'reservations', 'favoriteCourses'])->findOrFail($id);
 
-            if (!$user) {
-                return response()->json(['error' => 'Usuario no encontrado'], 404);
-            }
+    //         if (!$user) {
+    //             return response()->json(['error' => 'Usuario no encontrado'], 404);
+    //         }
 
-            if ($user->courses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene cursos asignados.'
-                ], 400);
-            }
+    //         if ($user->courses()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene cursos asignados.'
+    //             ], 400);
+    //         }
 
-            if ($user->reservations()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene reservas activas.'
-                ], 400);
-            }
+    //         if ($user->reservations()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene reservas activas.'
+    //             ], 400);
+    //         }
 
-            if ($user->favoriteCourses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene cursos marcados como favoritos.'
-                ], 400);
-            }
+    //         if ($user->favoriteCourses()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene cursos marcados como favoritos.'
+    //             ], 400);
+    //         }
 
-            $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
-            if ($isInstructor) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque está asignado como instructor en uno o más horarios.'
-                ], 400);
-            }
+    //         $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
+    //         if ($isInstructor) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque está asignado como instructor en uno o más horarios.'
+    //             ], 400);
+    //         }
 
-            $user->delete();
+    //         $user->delete();
 
-            return response()->json([
-                'message' => 'Usuario eliminado exitosamente',
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Eliminación fallida',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'message' => 'Usuario eliminado exitosamente',
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Eliminación fallida',
+    //             'message' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 
-    public function deleteCollaborator(string $collaborator_number)
-    {
-        try {
-            $user = User::with(['courses', 'reservations', 'favoriteCourses'])->where('collaborator_number', $collaborator_number)->firstOrFail();
+    // public function deleteCollaborator(string $collaborator_number)
+    // {
+    //     try {
+    //         $user = User::with(['courses', 'reservations', 'favoriteCourses'])->where('collaborator_number', $collaborator_number)->firstOrFail();
 
-            if (!$user) {
-                return response()->json(['error' => 'Usuario no encontrado'], 404);
-            }
+    //         if (!$user) {
+    //             return response()->json(['error' => 'Usuario no encontrado'], 404);
+    //         }
 
-            if ($user->courses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene cursos asignados.'
-                ], 400);
-            }
+    //         if ($user->courses()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene cursos asignados.'
+    //             ], 400);
+    //         }
 
-            if ($user->reservations()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene reservas activas.'
-                ], 400);
-            }
+    //         if ($user->reservations()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene reservas activas.'
+    //             ], 400);
+    //         }
 
-            if ($user->favoriteCourses()->exists()) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque tiene cursos marcados como favoritos.'
-                ], 400);
-            }
+    //         if ($user->favoriteCourses()->exists()) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque tiene cursos marcados como favoritos.'
+    //             ], 400);
+    //         }
 
-            $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
-            if ($isInstructor) {
-                return response()->json([
-                    'error' => 'No se puede eliminar este usuario porque está asignado como instructor en uno o más horarios.'
-                ], 400);
-            }
+    //         $isInstructor = EventsSchedule::where('instructor_id', $user->id)->exists();
+    //         if ($isInstructor) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar este usuario porque está asignado como instructor en uno o más horarios.'
+    //             ], 400);
+    //         }
 
-            $user->delete();
+    //         $user->delete();
 
-            return response()->json([
-                'message' => 'Usuario eliminado exitosamente',
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Eliminación fallida',
-                'message' => $e->getMessage(),
-            ], 500);
-        }
-    }
+    //         return response()->json([
+    //             'message' => 'Usuario eliminado exitosamente',
+    //         ], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Eliminación fallida',
+    //             'message' => $e->getMessage(),
+    //         ], 500);
+    //     }
+    // }
 }

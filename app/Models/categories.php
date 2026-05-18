@@ -13,7 +13,7 @@ class categories extends Model
     protected $fillable = [
         'name',
         'description',
-        'user_id',
+        'estado',
     ];
 
     protected $dates = ['deleted_at'];
@@ -27,10 +27,5 @@ class categories extends Model
     public function courses()
     {
         return $this->hasMany(Course::class, 'category_id');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -54,9 +54,12 @@ class ModelsController extends Controller
             $validated = $request->validate([
                 'nombre_segmento' => 'nullable|string|max:255',
                 'nombre_tipo_unidad' => 'required|string|max:255',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'nombre_tipo_unidad.required' => 'El nombre del segmento es obligatorio',
                 'nombre_modelo.required' => 'El nombre de tipo unidad es obligatorio',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             $model = Models::create($validated);
@@ -93,9 +96,12 @@ class ModelsController extends Controller
             $validated = $request->validate([
                 'nombre_segmento' => 'nullable|string|max:255',
                 'nombre_tipo_unidad' => 'required|string|max:255',
+                'estado' => 'nullable|integer|in:0,1,2',
             ], [
                 'nombre_tipo_unidad.required' => 'El nombre del segmento es obligatorio',
                 'nombre_modelo.required' => 'El nombre de tipo unidad es obligatorio',
+                'estado.integer' => 'El estado debe ser un número entero',
+                'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
             ]);
 
             $model->update($validated);
@@ -117,26 +123,26 @@ class ModelsController extends Controller
         }
     }
 
-    public function destroy($id)
-    {
-        try {
-            $model = Models::with('courses')->findOrFail($id);
+    // public function destroy($id)
+    // {
+    //     try {
+    //         $model = Models::with('courses')->findOrFail($id);
 
-            if ($model->courses->count() > 0) {
-                return response()->json([
-                    'error' => 'No se puede eliminar el modelo',
-                    'mensaje' => 'Este modelo tiene cursos asociados y no puede ser eliminado.'
-                ], 400);
-            }
+    //         if ($model->courses->count() > 0) {
+    //             return response()->json([
+    //                 'error' => 'No se puede eliminar el modelo',
+    //                 'mensaje' => 'Este modelo tiene cursos asociados y no puede ser eliminado.'
+    //             ], 400);
+    //         }
 
-            $model->delete();
+    //         $model->delete();
 
-            return response()->json(['mensaje' => 'Modelo eliminado correctamente.'], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'error' => 'Error al eliminar el modelo',
-                'mensaje' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //         return response()->json(['mensaje' => 'Modelo eliminado correctamente.'], 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'error' => 'Error al eliminar el modelo',
+    //             'mensaje' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }

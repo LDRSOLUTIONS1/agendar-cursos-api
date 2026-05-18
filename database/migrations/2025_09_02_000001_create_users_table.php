@@ -37,6 +37,10 @@ return new class extends Migration
 
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
 
+            $table->tinyInteger('estado')
+                ->default(2)
+                ->comment('0=Eliminado, 1=Inactivo, 2=Activo');
+
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

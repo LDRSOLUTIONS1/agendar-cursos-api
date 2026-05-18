@@ -12,6 +12,7 @@ use App\Http\Controllers\ReservationControlller;
 use App\Http\Controllers\ReservationParticipantController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\SegmentsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -63,6 +64,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/models/user/{user_id}', [ModelsController::class, 'indexByUser']);
     //Modelos resource
     Route::resource('/modelos', ModelsController::class);
+    //Segmentos resource
+    Route::resource('/segments', SegmentsController::class);
 
     //Cursos resource
     Route::resource('/course', CourseController::class);

@@ -42,6 +42,7 @@ class User extends Authenticatable
         'position',
         'url',
         'category_id',
+        'estado',
     ];
 
     protected $dates = ['deleted_at'];
