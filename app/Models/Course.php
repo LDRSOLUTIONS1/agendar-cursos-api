@@ -16,6 +16,7 @@ class Course extends Model
     protected $fillable = [
         'category_id',
         'model_id',
+        'segment_id',
         'user_id',
         'title',
         'description',
@@ -43,6 +44,11 @@ class Course extends Model
     public function models()
     {
         return $this->belongsTo(Models::class, 'model_id');
+    }
+
+    public function segment()
+    {
+        return $this->belongsTo(Segment::class, 'segment_id');
     }
 
     // Relación uno a muchos con Users: un curso pertenece a un usuario

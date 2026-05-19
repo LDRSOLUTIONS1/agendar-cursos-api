@@ -10,7 +10,6 @@ class Models extends Model
     use HasFactory;
 
     protected $fillable = [
-        'nombre_segmento',
         'nombre_tipo_unidad',
         'segment_id',
         'estado',

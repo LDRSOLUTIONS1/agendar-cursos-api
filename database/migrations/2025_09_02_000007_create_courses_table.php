@@ -17,6 +17,7 @@ class CreateCoursesTable extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
             $table->foreignId('model_id')->nullable()->constrained('models')->onDelete('cascade');
+            $table->foreignId('segment_id')->nullable()->constrained('segments')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();

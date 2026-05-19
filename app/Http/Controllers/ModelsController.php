@@ -11,7 +11,7 @@ class ModelsController extends Controller
     public function index()
     {
         try {
-            $models = Models::all();
+            $models = Models::with('segment:id,name')->get();
             return response()->json($models, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -38,7 +38,7 @@ class ModelsController extends Controller
     public function show($id)
     {
         try {
-            $model = Models::findOrFail($id);
+            $model = Models::with('segment')->findOrFail($id);
             return response()->json($model, 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -52,11 +52,13 @@ class ModelsController extends Controller
     {
         try {
             $validated = $request->validate([
-                'nombre_segmento' => 'nullable|string|max:255',
+                'segment_id' => 'required|exists:segments,id',
                 'nombre_tipo_unidad' => 'required|string|max:255',
                 'estado' => 'nullable|integer|in:0,1,2',
             ], [
-                'nombre_tipo_unidad.required' => 'El nombre del segmento es obligatorio',
+                'segment_id.required' => 'El segmento es obligatorio',
+                'segment_id.exists' => 'El segmento no existe',
+                'nombre_tipo_unidad.required' => 'El nombre del modelo es obligatorio',
                 'nombre_modelo.required' => 'El nombre de tipo unidad es obligatorio',
                 'estado.integer' => 'El estado debe ser un número entero',
                 'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',
@@ -94,11 +96,13 @@ class ModelsController extends Controller
             // }
 
             $validated = $request->validate([
-                'nombre_segmento' => 'nullable|string|max:255',
+                'segment_id' => 'required|exists:segments,id',
                 'nombre_tipo_unidad' => 'required|string|max:255',
                 'estado' => 'nullable|integer|in:0,1,2',
             ], [
-                'nombre_tipo_unidad.required' => 'El nombre del segmento es obligatorio',
+                'segment_id.required' => 'El segmento es obligatorio',
+                'segment_id.exists' => 'El segmento no existe',
+                'nombre_tipo_unidad.required' => 'El nombre del modelo es obligatorio',
                 'nombre_modelo.required' => 'El nombre de tipo unidad es obligatorio',
                 'estado.integer' => 'El estado debe ser un número entero',
                 'estado.in' => 'El estado debe ser 0 (Eliminado), 1 (Inactivo) o 2 (Activo)',

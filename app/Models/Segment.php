@@ -15,6 +15,12 @@ class Segment extends Model
         'estado'
     ];
 
+    protected $hidden = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
+
     public function models()
     {
         return $this->hasMany(Models::class);

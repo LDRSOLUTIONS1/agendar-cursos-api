@@ -12,7 +12,8 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images');
+            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
+                ->latest();
 
             if ($request->has('nombre') && !empty($request->nombre)) {
                 $search = $request->nombre;
@@ -44,7 +45,7 @@ class CourseController extends Controller
     public function indexByUser(Request $request, $user_id)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality', 'reservations', 'usersWhoFavorited', 'images')
+            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality', 'reservations', 'usersWhoFavorited', 'images', 'segment')
                 ->where('user_id', $user_id);
 
             if ($request->has('nombre') && !empty($request->nombre)) {
@@ -81,7 +82,7 @@ class CourseController extends Controller
     public function indexTypeUserCourse(Request $request, $id)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images')
+            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
                 ->whereHas('schedules', function ($q) use ($id) {
                     $q->where('instructor_id', $id);
                 });
@@ -118,7 +119,7 @@ class CourseController extends Controller
     public function show($id)
     {
         try {
-            $course = Course::with('category', 'models', 'user', 'schedules',  'schedules.instructor', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images')->findOrFail($id);
+            $course = Course::with('category', 'models', 'user', 'schedules',  'schedules.instructor', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')->findOrFail($id);
             return response()->json($course, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Curso no encontrado', 'mensaje' => $e->getMessage()], 404);
@@ -132,7 +133,8 @@ class CourseController extends Controller
             $validated = $request->validate([
                 'instructor_id' => 'nullable|exists:users,id',
                 'category_id' => 'required|exists:categories,id',
-                'model_id' => 'required|exists:models,id',
+                'model_id' => 'nullable|exists:models,id',
+                'segment_id' => 'nullable|exists:segments,id',
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'modality' => 'required|string|max:50',
@@ -142,8 +144,8 @@ class CourseController extends Controller
                 'instructor_id.exists' => 'El instructor no existe',
                 'category_id.required' => 'La categoría es obligatoria',
                 'category_id.exists' => 'La categoría no existe',
-                'model_id.required' => 'El modelo es obligatorio',
                 'model_id.exists' => 'El modelo no existe',
+                'segment_id.exists' => 'El segmento no existe',
                 'title.required' => 'El título es obligatorio',
                 'title.max' => 'El título no puede tener más de 255 caracteres',
                 'description.required' => 'La descripción es obligatoria',
@@ -153,6 +155,15 @@ class CourseController extends Controller
                 'duration.max' => 'La duración no puede tener más de 100 caracteres',
                 'syllabus_pdf.max' => 'El nombre del archivo PDF no puede tener más de 255 caracteres',
             ]);
+
+            if (
+                empty($validated['model_id']) &&
+                empty($validated['segment_id'])
+            ) {
+                return response()->json([
+                    'error' => 'Debes seleccionar un modelo o un segmento'
+                ], 422);
+            }
 
             $validated['user_id'] = auth()->id();
 
@@ -193,7 +204,8 @@ class CourseController extends Controller
             $validated = $request->validate([
                 'instructor_id' => 'nullable|exists:users,id',
                 'category_id' => 'required|exists:categories,id',
-                'model_id' => 'required|exists:models,id',
+                'model_id' => 'nullable|exists:models,id',
+                'segment_id' => 'nullable|exists:segments,id',
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
                 'modality' => 'required|string|max:50',
@@ -203,8 +215,8 @@ class CourseController extends Controller
                 'instructor_id.exists' => 'El instructor no existe',
                 'category_id.required' => 'La categoría es obligatoria',
                 'category_id.exists' => 'La categoría no existe',
-                'model_id.required' => 'El modelo es obligatorio',
                 'model_id.exists' => 'El modelo no existe',
+                'segment_id.exists' => 'El segmento no existe',
                 'title.required' => 'El título es obligatorio',
                 'title.max' => 'El título no puede tener más de 255 caracteres',
                 'description.required' => 'La descripción es obligatoria',
@@ -214,6 +226,15 @@ class CourseController extends Controller
                 'duration.max' => 'La duración no puede tener más de 100 caracteres',
                 'syllabus_pdf.max' => 'El nombre del archivo PDF no puede tener más de 255 caracteres',
             ]);
+
+            if (
+                empty($validated['model_id']) &&
+                empty($validated['segment_id'])
+            ) {
+                return response()->json([
+                    'error' => 'Debes seleccionar un modelo o un segmento'
+                ], 422);
+            }
 
             $course->update($validated);
 

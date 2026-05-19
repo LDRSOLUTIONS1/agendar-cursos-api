@@ -10,9 +10,8 @@ class CreateModelsTable extends Migration
     {
         Schema::create('models', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre_segmento')->nullable();
-            $table->string('nombre_tipo_unidad')->nullable();
             $table->foreignId('segment_id')->nullable()->constrained('segments')->onDelete('cascade');
+            $table->string('nombre_tipo_unidad')->nullable();
             $table->tinyInteger('estado')
                 ->default(2)
                 ->comment('0=Eliminado, 1=Inactivo, 2=Activo');

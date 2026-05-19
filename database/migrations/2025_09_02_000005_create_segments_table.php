@@ -10,7 +10,7 @@ class CreateSegmentsTable extends Migration
     {
         Schema::create('segments', function (Blueprint $table) {
             $table->id();
-
+            
             $table->string('name');
             $table->text('description')->nullable();
             $table->tinyInteger('estado')
