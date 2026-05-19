@@ -48,6 +48,7 @@ class EventsScheduleController extends Controller
             $query = EventsSchedule::with([
                 'course',
                 'course.models',
+                'course.segment',
                 'instructor',
                 'reservations',
                 'reservations.student',
@@ -372,7 +373,7 @@ class EventsScheduleController extends Controller
     public function show($id)
     {
         try {
-            $schedule = EventsSchedule::with('state', 'municipality', 'course', 'course.category', 'course.models', 'course.user', 'instructor', 'reservations', 'reservations.student', 'reservations.imports', 'reservations.participants')->findOrFail($id);
+            $schedule = EventsSchedule::with('state', 'municipality', 'course', 'course.category', 'course.models', 'course.segment',  'course.user', 'instructor', 'reservations', 'reservations.student', 'reservations.imports', 'reservations.participants')->findOrFail($id);
 
             return response()->json($schedule, 200);
         } catch (\Exception $e) {
