@@ -12,7 +12,7 @@ class CourseController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
+            $query = Course::with('category', 'models', 'models.segment:id,name',  'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
                 ->latest();
 
             if ($request->has('nombre') && !empty($request->nombre)) {
@@ -45,7 +45,7 @@ class CourseController extends Controller
     public function indexByUser(Request $request, $user_id)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality', 'reservations', 'usersWhoFavorited', 'images', 'segment')
+            $query = Course::with('category', 'models', 'models.segment:id,name',  'user', 'schedules', 'schedules.state', 'schedules.municipality', 'reservations', 'usersWhoFavorited', 'images', 'segment')
                 ->where('user_id', $user_id);
 
             if ($request->has('nombre') && !empty($request->nombre)) {
@@ -82,7 +82,7 @@ class CourseController extends Controller
     public function indexTypeUserCourse(Request $request, $id)
     {
         try {
-            $query = Course::with('category', 'models', 'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
+            $query = Course::with('category', 'models', 'models.segment:id,name',  'user', 'schedules', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')
                 ->whereHas('schedules', function ($q) use ($id) {
                     $q->where('instructor_id', $id);
                 });
@@ -119,7 +119,7 @@ class CourseController extends Controller
     public function show($id)
     {
         try {
-            $course = Course::with('category', 'models', 'user', 'schedules',  'schedules.instructor', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')->findOrFail($id);
+            $course = Course::with('category', 'models', 'models.segment:id,name', 'user', 'schedules',  'schedules.instructor', 'schedules.state', 'schedules.municipality',  'reservations', 'usersWhoFavorited', 'images', 'segment')->findOrFail($id);
             return response()->json($course, 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Curso no encontrado', 'mensaje' => $e->getMessage()], 404);
